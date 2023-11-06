@@ -1,59 +1,57 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-
-public class Journal
+class Journal
 {
-    private string journalFilePath;
-
-    public Journal(string filePath)
+    public static void Save()
     {
-        journalFilePath = filePath;
-    }
-
-    public List<string> LoadEntries()
-    {
-        List<string> entries = new List<string>();
-        try
+        Console.Write("Enter the name of the text file to save (Leave blank for the default file): ");
+        string fileName = Console.ReadLine();
+        if (fileName == "")
         {
-            if (File.Exists(journalFilePath))
+            fileName = "default";
+        }
+
+
+        using (StreamWriter sw = new StreamWriter(fileName))
+        {
+            for (int i = 0; i < Program.generatedResponse.Count; i++)
             {
-                string[] lines = File.ReadAllLines(journalFilePath);
-                entries.AddRange(lines);
+                sw.WriteLine("Prompt: " + Program.generatedResponse[i]);
+                sw.WriteLine("Your Answer: " + Program.writtenResponse[i]);
             }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading journal entries: {ex.Message}");
-        }
-        return entries;
+
+        Console.WriteLine("Data saved to the file.");
     }
 
-    public void SaveEntries(List<string> entries)
+    public static void Load()
     {
-        try
+        Console.Write("Enter the name of the text file to load (Leave blank for the default file, Cannot load files that do not exist): ");
+        string fileName = Console.ReadLine();
+        if (fileName == "")
         {
-            File.WriteAllLines(journalFilePath, entries);
-            Console.WriteLine("Journal entries saved successfully.");
+            fileName = "default";
         }
-        catch (Exception ex)
+
+        Program.generatedResponse.Clear();
+        Program.writtenResponse.Clear();
+        using (StreamReader sr = new StreamReader(fileName))
         {
-            Console.WriteLine($"Error saving journal entries: {ex.Message}");
-        }
-    }
-    public void AddEntry(string entry)
-    {
-        try
-        {
-            using (StreamWriter sw = File.AppendText(journalFilePath))
+            string line;
+            string currentGeneratedResponse = "";
+            string currentWrittenResponse = "";
+            while ((line = sr.ReadLine()) != null)
             {
-                sw.WriteLine(entry);
-                Console.WriteLine("Journal entry added successfully.");
+                if (line.StartsWith("Prompt: "))
+                {
+                    currentGeneratedResponse = line.Substring("Prompt: ".Length);
+                }
+                else if (line.StartsWith("Your Answer: "))
+                {
+                    currentWrittenResponse = line.Substring("Your Answer: ".Length);
+                    Program.generatedResponse.Add(currentGeneratedResponse);
+                    Program.writtenResponse.Add(currentWrittenResponse);
+                }
             }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error adding journal entry: {ex.Message}");
-        }
+        Console.WriteLine("Data loaded from the file.");
     }
 }

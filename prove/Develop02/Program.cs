@@ -1,86 +1,61 @@
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-
 class Program
 {
-    static void Main(string[] args)
+    public static List<string> generatedResponse = new List<string>();
+    public static List<string> writtenResponse = new List<string>();
+
+    static void Main()
     {
-        Console.WriteLine("Welcome to the Journal App!");
-
-        Console.Write("Enter the path of the journal file: ");
-        string filePath = Console.ReadLine();
-
-        Journal journal = new Journal(filePath);
-        Entry journalEntry = new Entry();
-        bool quit = false;
-
-        while (!quit)
+        while (true)
         {
-            Console.WriteLine("\nMenu:");
-            Console.WriteLine("1. Write");
-            Console.WriteLine("2. Display");
-            Console.WriteLine("3. Load");
-            Console.WriteLine("4. Save");
-            Console.WriteLine("5. Create");
-            Console.WriteLine("6. Quit");
-            Console.Write("Select an option (1-6): ");
+            Console.WriteLine("Menu:");
+            Console.WriteLine("1. Display");
+            Console.WriteLine("2. Write");
+            Console.WriteLine("3. Save");
+            Console.WriteLine("4. Load");
+            Console.WriteLine("5. Quit");
 
-            if (int.TryParse(Console.ReadLine(), out int choice))
+            int choice = int.Parse(Console.ReadLine());
+
+            switch (choice)
             {
-                switch (choice)
-                {
-                    case 1:
-                        string randomQuestion = journalEntry.GetRandomEntryPrompt();
-                        Console.WriteLine($"Question: {randomQuestion}");
-
-                        Console.Write("Your Answer: ");
-                        string userResponse = Console.ReadLine();
-                        journalEntry.Save(userResponse);
-                        entryCount = entryCount + 1;
-
-                        journal.AddEntry($"{randomQuestion}\n{userResponse}\n");
-                        break;
-
-                    case 2:
-                        journalEntry.Display();
-                        break;
-
-                    case 3:
-                        List<string> loadedEntries = journal.LoadEntries();
-                        Console.WriteLine("Loaded Journal Entries:");
-                        foreach (var entry in loadedEntries)
-                        {
-                            Console.WriteLine(entry);
-                        }
-                        break;
-
-                    case 4:
-                        //List<string> allEntries = journalEntry.GetUserResponses();
-                        //journal.SaveEntries(allEntries);
-                        //break;
-
-                    case 5:
-                        Console.Write("Enter the name of the new journal file: ");
-                        filePath = Console.ReadLine();
-                        journal = new Journal(filePath);
-                        break;
-
-                    case 6:
-                        quit = true;
-                        break;
-
-                    default:
-                        Console.WriteLine("Invalid choice. Please select a valid option (1-6).");
-                        break;
-                }
-            }
-            else
-            {
-                Console.WriteLine("Invalid input. Please enter a number (1-6).");
+                case 1:
+                    Console.Clear();
+                    Display();
+                    break;
+                case 2:
+                    Console.Clear();
+                    Entry.Write();
+                    break;
+                case 3:
+                    Console.Clear();
+                    Journal.Save();
+                    break;
+                case 4:
+                    Console.Clear();
+                    Journal.Load();
+                    break;
+                case 5:
+                    Console.Clear();
+                    Quit();
+                    return;
+                default:
+                    Console.WriteLine("Invalid option. Please select a valid option.");
+                    break;
             }
         }
+    }
 
-        Console.WriteLine("Thank you for using the Journal App!");
+    static void Display()
+    {
+        for (int i = 0; i < generatedResponse.Count; i++)
+        {
+            Console.WriteLine($"Prompt: {generatedResponse[i]}");
+            Console.WriteLine($"Your Answer: {writtenResponse[i]}\n");
+        }
+    }
+
+    static void Quit()
+    {
+        Environment.Exit(0);
     }
 }
