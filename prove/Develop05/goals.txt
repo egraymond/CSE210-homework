@@ -1,0 +1,3 @@
+EternalGoal,Go to Church,0,20
+ChecklistGoal,Go to church,0,20,4
+SimpleGoal,Do a flip,0,20
